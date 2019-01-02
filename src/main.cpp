@@ -2,6 +2,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include "main.hpp"
 
 #define PIN D1
 #define NUMBER_OF_PIXEL 10
@@ -9,21 +10,18 @@
 const char ssid[] = "*";
 const char password[] = "*";
 
-
-ESP8266WebServer server(80);
-
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMBER_OF_PIXEL, PIN, NEO_GRB + NEO_KHZ800);
 
 /*
  * 0: Standard-Modus (Farbe und Helligkeit)
  * 1: Pulsieren (Farbe und Helligkeit)
- * 
+ *
  */
  enum operationModes {
   STANDARD,
   PULSE
  };
- 
+
  int operationMode = STANDARD;
 
  struct RGB {
@@ -46,7 +44,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMBER_OF_PIXEL, PIN, NEO_GRB + NEO_
   int delayMs;
   int iterations;
  };
- 
+
 StandardMode standardMode;
 PulseMode pulseMode;
 
@@ -70,7 +68,7 @@ void loop() {
   server.handleClient();
   delay(1);
   switch(operationMode) {
-    case PULSE: 
+    case PULSE:
       doOperationPulse();
       break;
     default:
@@ -99,7 +97,7 @@ void doOperationPulse() {
   if (!up && currentBrightness > minBrightness) {
     pulseMode.currentBrightness = --currentBrightness;
   }
-  
+
   if (currentBrightness == maxBrightness || currentBrightness == minBrightness) {
     pulseMode.up = !up;
   }
@@ -107,7 +105,7 @@ void doOperationPulse() {
   int red = pulseMode.color.red;
   int green = pulseMode.color.green;
   int blue = pulseMode.color.blue;
-  
+
   for (int i=0; i < NUMBER_OF_PIXEL; i++) {
     strip.setPixelColor(i, red, green, blue);
   }
@@ -127,7 +125,7 @@ void doOperationStandard() {
     strip.setPixelColor(i, red, green, blue);
   }
   strip.setBrightness(brightness);
-  strip.show(); 
+  strip.show();
 }
 
 void handleOperation() {
@@ -170,7 +168,7 @@ void handleOperation() {
       break;
     }
   }
-  
+
   Serial.println(operation.get<int>("mode"));
 
   server.send(200, "text/plain", "OK");
