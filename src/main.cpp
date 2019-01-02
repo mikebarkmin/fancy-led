@@ -4,11 +4,13 @@
 #include <ESP8266WebServer.h>
 #include "main.hpp"
 
+#define XSTR(x) #x
+#define STR(x) XSTR(x)
 #define PIN D1
 #define NUMBER_OF_PIXEL 10
 
-const char ssid[] = "*";
-const char password[] = "*";
+const char ssid[] = STR(SSID);
+const char password[] = STR(PASSWORD);
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMBER_OF_PIXEL, PIN, NEO_GRB + NEO_KHZ800);
 
@@ -179,7 +181,8 @@ void connect() {
   // Setup wifi
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  Serial.println("");
+  delay(2500);
+  Serial.print("Tryining to connect to:");
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
